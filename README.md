@@ -16,7 +16,13 @@
 - **VPS Server**: You can obtain a VPS server through AWS Free Tier, Google Cloud Free Tier, or any other online provider for approximately $2-5 per month.
 - **Proxy Server**: It is essential to purchase only ISP residential proxies to earn points. Using data center or free proxies will result in zero earnings. Recommended proxy providers include:
 - **Proxies.fo**: Visit [https://app.proxies.fo](https://app.proxies.fo/ref/f1353b58-10c4-98a5-d94d-6164e2efcfaf) Purchase only the 1GB plan, which is sufficient for 1-6 months and allows for unlimited accounts or proxies.
-- A valid token from the DePINed API.
+- **DePINed Token:** A valid token from the DePINed API, Here's how to extract it:
+  - Go to the DePINed Dashboard and enter
+    ```bash
+    localStorage.getItem('token')
+    ```
+    ![image](https://github.com/user-attachments/assets/ea4dd3af-d0f6-40c3-bbb2-2243b3b79f30)
+  - Copy the Token and save it.
 - Basic knowledge of running Python scripts.
 ----
 ## If You Want To Buy Proxies From My Recommended Provider Follow These Steps
