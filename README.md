@@ -17,7 +17,7 @@
 - **Proxy Server**: It is essential to purchase only ISP residential proxies to earn points. Using data center or free proxies will result in zero earnings. Recommended proxy providers include:
 - **Proxies.fo**: Visit [https://app.proxies.fo](https://app.proxies.fo/ref/f1353b58-10c4-98a5-d94d-6164e2efcfaf) Purchase only the 1GB plan, which is sufficient for 1-6 months and allows for unlimited accounts or proxies.
 - **DePINed Token:** A valid token from the DePINed API, Here's how to extract it:
-  - Go to the DePINed Dashboard and enter
+  - Go to the DePINed Dashboard, Press CTRL + SHIFT + i and enter:
     ```bash
     localStorage.getItem('token')
     ```
