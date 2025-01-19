@@ -1,6 +1,6 @@
 # DePINed Network Automated Farming Bot For 100% Uptime
 
-### Automate your connection to the DePINed API with this Python-based script. This script manages multiple tokens and ensures 24/7 uptime for your connections.
+### Automate your connection to the DePINed API with this Python-based script. This script manages multiple tokens and ensures 24/7 uptime for your connections. You can join my Discord Server for invite codes.
 
 ![AGPL License](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)
 
