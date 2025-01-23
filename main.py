@@ -1,7 +1,3 @@
-# Copyright (C) 2024 FakerPK
-# Licensed under the AGPL-3.0: https://www.gnu.org/licenses/agpl-3.0.html
-# This software is provided "as-is" without any warranties.
-# @Software :VSCode
 import json
 import sqlite3
 import requests
@@ -131,4 +127,18 @@ if __name__ == "__main__":
             tokens = config.get("tokens", [])
             set_value("tokens", tokens)
     except FileNotFoundError:
-        print("❌ Config file not found. Please create a
+        print("❌ Config file not found. Please create a config.json file with your tokens.")
+        exit(1)
+    except json.JSONDecodeError:
+        print("❌ Invalid JSON in config file. Please check your config.json file.")
+        exit(1)
+
+    # Start connection
+    set_connection_state(True)
+
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        set_connection_state(False)
+        print("🛑 Connection logic simulation ended")
