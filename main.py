@@ -1,6 +1,7 @@
 import json
 import sqlite3
 import requests
+from requests.exceptions import RequestException
 from threading import Timer
 import time
 from colorama import Fore, Style, init
@@ -37,7 +38,7 @@ def get_value(key):
 
 def load_proxies():
     with open('proxy.txt', 'r') as file:
-        return file.read().splitlines()
+        return [line.strip() for line in file if line.strip()]
 
 def remove_proxy_from_list(proxy):
     with open("proxy.txt", "r+") as file:
@@ -51,13 +52,18 @@ def remove_proxy_from_list(proxy):
 def poll_api():
     connection_state = get_value("connectionState")
     if not connection_state:
-        print("Connection state is false, stopping polling")
+        print("Connection state is false, stopping polling", Fore.RED)
         return
 
     tokens = get_value("tokens") or []
     proxies = load_proxies()
 
     for token in tokens:
+        if not proxies:  # Check if there are any proxies left
+            print("❌ No proxies available. Exiting.", Fore.RED)
+            set_connection_state(False)
+            return
+
         proxy = random.choice(proxies)  # Select a random proxy for each token
         try:
             response = requests.post(
@@ -67,7 +73,7 @@ def poll_api():
                     "Authorization": f"Bearer {token}"
                 },
                 json={"connected": True},
-                proxies={"http": proxy, "https": proxy}  # Use the selected proxy
+                proxies={"http": proxy, "https": proxy}  # Use the selected SOCKS5 proxy
             )
             if response.status_code != 200:
                 print(f"❌ API call failed with status: {response.status_code} using proxy: {proxy}")
@@ -76,7 +82,7 @@ def poll_api():
                 return  # Exit the loop on failure
             else:
                 print(f"✅ API call successful for token: {token} using proxy: {proxy}")
-        except Exception as e:
+        except RequestException as e:
             print(f"⚠️ Polling error for token {token} using proxy {proxy}: {str(e)}")
             remove_proxy_from_list(proxy)  # Remove the proxy if there's an error
             set_connection_state(False)  # Set connection to false if there's an error
