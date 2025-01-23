@@ -60,12 +60,11 @@ def poll_api():
 
     for token in tokens:
         if not proxies:  # Check if there are any proxies left
-            print("❌ No proxies available. Exiting.", Fore.RED)
-            set_connection_state(False)
-            return
+            print("❌ No proxies available. Skipping token: {}".format(token), Fore.RED)
+            continue
 
-        proxy = random.choice(proxies)  # Select a random proxy for each token
         for attempt in range(3):  # Retry up to 3 times
+            proxy = random.choice(proxies)  # Select a random proxy for each token
             try:
                 start_time = time.time()  # Start timing the request
                 response = requests.post(
@@ -83,17 +82,9 @@ def poll_api():
                     break  # Exit the retry loop on success
                 else:
                     print(f"❌ API call failed with status: {response.status_code} using proxy: {proxy}", Fore.RED)
-                    remove_proxy_from_list(proxy)  # Remove the proxy if it fails
-                    set_connection_state(False)
-                    return
             except Exception as e:
                 print(f"⚠️ Polling error for token {token} using proxy {proxy}: {str(e)}")
                 remove_proxy_from_list(proxy)  # Remove the proxy if there's an error
-                set_connection_state(False)
-                return
-
-            # Wait before retrying
-        time.sleep(2)  # Adjust the delay as needed
 
     # Schedule the next poll
     if get_value("connectionState"):
