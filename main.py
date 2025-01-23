@@ -9,7 +9,7 @@ import random
 
 # Initialize colorama
 init(autoreset=True)
-
+polling_timer = None
 def open_database():
     conn = sqlite3.connect('extension.db')
     cursor = conn.cursor()
@@ -65,28 +65,35 @@ def poll_api():
             return
 
         proxy = random.choice(proxies)  # Select a random proxy for each token
-        try:
-            response = requests.post(
-                "https://api.depined.org/api/user/widget-connect",
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {token}"
-                },
-                json={"connected": True},
-                proxies={"http": proxy, "https": proxy}  # Use the selected SOCKS5 proxy
-            )
-            if response.status_code != 200:
-                print(f"❌ API call failed with status: {response.status_code} using proxy: {proxy}")
-                remove_proxy_from_list(proxy)  # Remove the proxy if it fails
-                set_connection_state(False)  # Set connection to false if API call fails
-                return  # Exit the loop on failure
-            else:
-                print(f"✅ API call successful for token: {token} using proxy: {proxy}")
-        except RequestException as e:
-            print(f"⚠️ Polling error for token {token} using proxy {proxy}: {str(e)}")
-            remove_proxy_from_list(proxy)  # Remove the proxy if there's an error
-            set_connection_state(False)  # Set connection to false if there's an error
-            return  # Exit the loop on error
+        for attempt in range(3):  # Retry up to 3 times
+            try:
+                start_time = time.time()  # Start timing the request
+                response = requests.post(
+                    "https://api.depined.org/api/user/widget-connect",
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {token}"
+                    },
+                    json={"connected": True},
+                    proxies={"http": proxy, "https": proxy}  # Use the selected SOCKS5 proxy
+                )
+                elapsed_time = time.time() - start_time  # Calculate elapsed time
+                if response.status_code == 200:
+                    print(f"✅ API call successful for token: {token} using proxy: {proxy} (Time: {elapsed_time:.2f}s)")
+                    break  # Exit the retry loop on success
+                else:
+                    print(f"❌ API call failed with status: {response.status_code} using proxy: {proxy}", Fore.RED)
+                    remove_proxy_from_list(proxy)  # Remove the proxy if it fails
+                    set_connection_state(False)
+                    return
+            except Exception as e:
+                print(f"⚠️ Polling error for token {token} using proxy {proxy}: {str(e)}")
+                remove_proxy_from_list(proxy)  # Remove the proxy if there's an error
+                set_connection_state(False)
+                return
+
+            # Wait before retrying
+        time.sleep(2)  # Adjust the delay as needed
 
     # Schedule the next poll
     if get_value("connectionState"):
@@ -94,7 +101,6 @@ def poll_api():
         polling_timer = Timer(30, poll_api)  # Set to 30 seconds
         polling_timer.start()
 
-polling_timer = None
 
 def start_polling():
     global polling_timer
