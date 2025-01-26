@@ -59,14 +59,14 @@ def poll_api():
     proxies = load_proxies()
 
     for token in tokens:
-        if not proxies:  # Check if there are any proxies left
+        if not proxies:  
             print("❌ No proxies available. Skipping token: {}".format(token), Fore.RED)
             continue
 
-        for attempt in range(3):  # Retry up to 3 times
-            proxy = random.choice(proxies)  # Select a random proxy for each token
+        for attempt in range(3):  # HOW MANY TIMES TO RETRY 
+            proxy = random.choice(proxies) 
             try:
-                start_time = time.time()  # Start timing the request
+                start_time = time.time() 
                 response = requests.post(
                     "https://api.depined.org/api/user/widget-connect",
                     headers={
@@ -74,22 +74,21 @@ def poll_api():
                         "Authorization": f"Bearer {token}"
                     },
                     json={"connected": True},
-                    proxies={"http": proxy, "https": proxy}  # Use the selected SOCKS5 proxy
+                    proxies={"http": proxy, "https": proxy}  
                 )
-                elapsed_time = time.time() - start_time  # Calculate elapsed time
+                elapsed_time = time.time() - start_time 
                 if response.status_code == 200:
                     print(f"✅ API call successful for token: {token} using proxy: {proxy} (Time: {elapsed_time:.2f}s)")
-                    break  # Exit the retry loop on success
+                    break  
                 else:
                     print(f"❌ API call failed with status: {response.status_code} using proxy: {proxy}", Fore.RED)
             except Exception as e:
                 print(f"⚠️ Polling error for token {token} using proxy {proxy}: {str(e)}")
-                remove_proxy_from_list(proxy)  # Remove the proxy if there's an error
+                remove_proxy_from_list(proxy)  
 
-    # Schedule the next poll
     if get_value("connectionState"):
         global polling_timer
-        polling_timer = Timer(30, poll_api)  # Set to 30 seconds
+        polling_timer = Timer(30, poll_api)  # PING INTERVAL
         polling_timer.start()
 
 
@@ -136,7 +135,7 @@ if __name__ == "__main__":
         print("❌ Invalid JSON in config file. Please check your config.json file.")
         exit(1)
 
-    # Start connection
+    # CONNECTION STARTING LOGIC
     set_connection_state(True)
 
     try:
