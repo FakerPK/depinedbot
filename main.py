@@ -1,7 +1,7 @@
 import json
 import sqlite3
-import requests
-from requests.exceptions import RequestException
+from curl_cffi import requests
+from fake_useragent import FakeUserAgent
 from threading import Timer
 import time
 from colorama import Fore, Style, init
@@ -9,7 +9,8 @@ import random
 
 # Initialize colorama
 init(autoreset=True)
-polling_timer = None
+polling_timers = []
+
 def open_database():
     conn = sqlite3.connect('extension.db')
     cursor = conn.cursor()
@@ -37,8 +38,11 @@ def get_value(key):
     return json.loads(result[0]) if result else None
 
 def load_proxies():
-    with open('proxy.txt', 'r') as file:
-        return [line.strip() for line in file if line.strip()]
+    try:
+        with open('proxy.txt', 'r') as file:
+            return [line.strip() for line in file if line.strip()]
+    except FileNotFoundError:
+        return []
 
 def remove_proxy_from_list(proxy):
     with open("proxy.txt", "r+") as file:
@@ -49,98 +53,122 @@ def remove_proxy_from_list(proxy):
                 file.write(line)
         file.truncate()
 
+class CloudflareBypassSession(requests.Session):
+    def __init__(self):
+        super().__init__()
+        self.impersonate = "chrome120"
+        self.headers = {
+            "Accept": "*/*",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-site",
+            "User-Agent": FakeUserAgent().random,
+            "X-Requested-With": "XMLHttpRequest"
+        }
+
+    def rotate_headers(self):
+        self.headers["User-Agent"] = FakeUserAgent().random
+
 def poll_api():
     connection_state = get_value("connectionState")
     if not connection_state:
-        print("Connection state is false, stopping polling", Fore.RED)
+        print(f"{Fore.RED}🛑 Connection state is false, stopping polling")
         return
 
     tokens = get_value("tokens") or []
     proxies = load_proxies()
 
     for token in tokens:
-        if not proxies:  
-            print("❌ No proxies available. Skipping token: {}".format(token), Fore.RED)
-            continue
-
-        for attempt in range(3):  # HOW MANY TIMES TO RETRY 
-            proxy = random.choice(proxies) 
+        session = CloudflareBypassSession()
+        success = False
+        
+        for attempt in range(3):
+            proxy = random.choice(proxies) if proxies else None
             try:
-                start_time = time.time() 
-                response = requests.post(
+                session.rotate_headers()
+                response = session.post(
                     "https://api.depined.org/api/user/widget-connect",
                     headers={
                         "Content-Type": "application/json",
-                        "Authorization": f"Bearer {token}"
+                        "Authorization": f"Bearer {token}",
+                        "Origin": "https://app.depined.org",
+                        "Referer": "https://app.depined.org/"
                     },
                     json={"connected": True},
-                    proxies={"http": proxy, "https": proxy}  
+                    proxy=proxy,
+                    timeout=30
                 )
-                elapsed_time = time.time() - start_time 
+                
                 if response.status_code == 200:
-                    print(f"✅ API call successful for token: {token} using proxy: {proxy} (Time: {elapsed_time:.2f}s)")
-                    break  
+                    print(f"{Fore.GREEN}✅ {Style.BRIGHT}Success for {token[:8]}...{Style.RESET_ALL}"
+                          f"{Fore.LIGHTBLUE_EX} using {proxy}{Style.RESET_ALL}")
+                    success = True
+                    break
                 else:
-                    print(f"❌ API call failed with status: {response.status_code} using proxy: {proxy}", Fore.RED)
+                    print(f"{Fore.YELLOW}⚠️ {Style.BRIGHT}Attempt {attempt+1} failed (Code {response.status_code})")
+                    if response.status_code == 403:
+                        remove_proxy_from_list(proxy)
+                        proxies = load_proxies()
             except Exception as e:
-                print(f"⚠️ Polling error for token {token} using proxy {proxy}: {str(e)}")
-                remove_proxy_from_list(proxy)  
+                print(f"{Fore.RED}❌ {Style.BRIGHT}Connection error: {str(e)}")
+                if proxy:
+                    remove_proxy_from_list(proxy)
+                    proxies = load_proxies()
+
+        if not success:
+            print(f"{Fore.RED}🔴 {Style.BRIGHT}All attempts failed for {token[:8]}...")
 
     if get_value("connectionState"):
-        global polling_timer
-        polling_timer = Timer(30, poll_api)  # PING INTERVAL
-        polling_timer.start()
-
+        t = Timer(30, poll_api)
+        polling_timers.append(t)
+        t.start()
 
 def start_polling():
-    global polling_timer
-    if polling_timer is None:
-        poll_api()
+    stop_polling()
+    poll_api()
 
 def stop_polling():
-    global polling_timer
-    if polling_timer:
-        polling_timer.cancel()
-        polling_timer = None
+    for t in polling_timers:
+        t.cancel()
+    polling_timers.clear()
 
-def set_connection_state(is_connected):
-    set_value("connectionState", is_connected)
-    if is_connected:
-        start_polling()
-    else:
-        stop_polling()
+def cleanup():
+    stop_polling()
 
 if __name__ == "__main__":
-    print(f"""{Fore.YELLOW}
- ______    _             _____  _  __
-|  ____|  | |           |  __ \| |/ /
-| |__ __ _| | _____ _ __| |__) | ' / 
-|  __/ _` | |/ / _ \ '__|  ___/|  <  
-| | | (_| |   <  __/ |  | |    | . \ 
-|_|  \__,_|_|\_\___|_|  |_|    |_|\_\ {Style.RESET_ALL}
+    print(f"""{Fore.YELLOW + Style.BRIGHT}
+    ███████╗ █████╗ ██╗  ██╗███████╗██████╗  ██████╗ ██╗  ██╗ 
+    ██╔════╝██╔══██╗██║ ██╔╝██╔════╝██╔══██╗ ██╔══██╗██║ ██╔╝ 
+    █████╗  ███████║█████╔╝ █████╗  ██████╔╝ ██████╔╝█████╔╝  
+    ██╔══╝  ██╔══██║██╔═██╗ ██╔══╝  ██╔══██╗ ██╔═══╝ ██╔═██╗  
+    ██║     ██║  ██║██║  ██╗███████╗██║  ██║ ██║     ██║  ██╗     
+    ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝ ╚═╝     ╚═╝  ╚═╝     
+{Style.RESET_ALL}
     """)
 
-    print(f"{Fore.MAGENTA}DePINed Bot! AUTOMATE AND DOMINATE{Style.RESET_ALL}")
-    print(f"{Fore.RED}========================================{Style.RESET_ALL}")
+    print(f"{Fore.LIGHTBLUE_EX + Style.BRIGHT}🚀 DePINed Bot! AUTOMATE AND DOMINATE{Style.RESET_ALL}")
+    print(f"{Fore.RED}═══════════════════════════════════════════════════{Style.RESET_ALL}")
+
 
     try:
         with open('config.json', 'r') as config_file:
             config = json.load(config_file)
             tokens = config.get("tokens", [])
             set_value("tokens", tokens)
-    except FileNotFoundError:
-        print("❌ Config file not found. Please create a config.json file with your tokens.")
-        exit(1)
-    except json.JSONDecodeError:
-        print("❌ Invalid JSON in config file. Please check your config.json file.")
+            print(f"{Fore.GREEN}✅ {Style.BRIGHT}Loaded {len(tokens)} tokens{Style.RESET_ALL}")
+    except Exception as e:
+        print(f"{Fore.RED}❌ {Style.BRIGHT}Config error: {str(e)}{Style.RESET_ALL}")
         exit(1)
 
-    # CONNECTION STARTING LOGIC
-    set_connection_state(True)
+    set_value("connectionState", True)
+    start_polling()
 
     try:
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
-        set_connection_state(False)
-        print("🛑 Connection logic simulation ended")
+        print(f"\n{Fore.YELLOW}🛑 {Style.BRIGHT}Shutting down...{Style.RESET_ALL}")
+        cleanup()
+        set_value("connectionState", False)
+        print(f"{Fore.GREEN}✅ {Style.BRIGHT}Cleanup complete{Style.RESET_ALL}")
