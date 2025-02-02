@@ -1,2 +1,6 @@
 requests
 colorama
+curl-cffi
+fake-useragent
+colorama
+pytz
