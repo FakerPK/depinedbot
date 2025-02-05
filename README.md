@@ -1,57 +1,101 @@
 # UPDATED: DePINed Network Automated Farming Bot For 100% Uptime
+### Automate your connection to the DePINed API with this script. Manage multiple tokens and ensure 24/7 uptime. Join my Discord Server for invite codes.
 
-### Automate your connection to the DePINed API with this Python-based script. This script manages multiple tokens and ensures 24/7 uptime for your connections. You can join my Discord Server for invite codes.
+![AGPL License](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)  
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue)  
+![Node.js](https://img.shields.io/badge/Node.js-16%2B-green)
 
-![AGPL License](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)
+## Features 🌟
+* 🔄 Automatic proxy rotation
+* 🔑 Multi-token support
+* 🛡️ Cloudflare bypass
+* 📊 SQLite database tracking
+* 🚦 Connection state management
+* 🌈 Colorful console interface
 
-## Features
-* Connects to the DePINed API using multiple tokens.
-* Handles connection state management and error handling.
-* Automatically retries connections and logs status with colorful output and emojis.
 ----
-## Requirements
-- **Python**: Install Python from [python.org](https://www.python.org/downloads/) (available for Windows and macOS) or on Ubuntu Server using the following command:
-  ```bash
-  sudo apt install python3
-- **VPS Server**: You can obtain a VPS server through AWS Free Tier, Google Cloud Free Tier, or any other online provider for approximately $2-5 per month.
-- **Proxy Server**: It is essential to purchase only ISP residential proxies to earn points. Using data center or free proxies will result in zero earnings. Recommended proxy providers include:
-- **Proxies.fo**: Visit [https://app.proxies.fo](https://app.proxies.fo/ref/f1353b58-10c4-98a5-d94d-6164e2efcfaf) Purchase only the 1GB plan, which is sufficient for 1-6 months and allows for unlimited accounts or proxies.
-- **DePINed Token:** A valid token from the DePINed API, Here's how to extract it:
-  - Go to the DePINed Dashboard, Press CTRL + SHIFT + i and enter:
-    ```bash
-    localStorage.getItem('token')
-    ```
-    ![image](https://github.com/user-attachments/assets/ea4dd3af-d0f6-40c3-bbb2-2243b3b79f30)
-  - Copy the Token and save it.
-- Basic knowledge of running Python scripts.
-----
-## If You Want To Buy Proxies From My Recommended Provider Follow These Steps
-1. Go to [https://app.proxies.fo](https://app.proxies.fo/ref/f1353b58-10c4-98a5-d94d-6164e2efcfaf) and Sign Up.
-2. Go to the ISP section, DONOT BUY THE RESIDENTIAL PLAN OR ELSE THIS WON'T WORK:
-![image](https://github.com/user-attachments/assets/c81fc995-11f9-4448-9355-0065d4286cf2)
-3. Buy one of these plans, remember DONOT BUY THE RESIDENTIAL PLAN ONLY BUY THE ISP PLAN:
-![image](https://github.com/user-attachments/assets/bbd22e0a-22c7-42cf-8608-361d7310e0ae)
-4. Now you're going to generate SOCKS5 proxies, and add them to the proxy.txt file.
-----
-## Steps to Run the Code
+## Requirements 📋
 
-Before running the script, ensure you have Python installed on your machine. Then, install the necessary Python packages using:
+#### 🏗️ Infrastructure
 
-#### 1. Clone the repo:
+- **VPS Server**: AWS/GCP/DigitalOcean ($2-5/month)
+- **ISP Proxies**: **MUST** use residential proxies (SOCKS5 format)
+  - Recommended: [proxies.fo ISP Plan](https://app.proxies.fo/ref/f1353b58-10c4-98a5-d94d-6164e2efcfaf)
+  ![Proxy Setup](https://github.com/user-attachments/assets/c81fc995-11f9-4448-9355-0065d4286cf2)
+
+  ![Proxy Plan](https://github.com/user-attachments/assets/bbd22e0a-22c7-42cf-8608-361d7310e0ae)
+
+<details>
+<summary><strong>💻 Development Environment</strong></summary>
+
+**Choose your language:**
+
+<details>
+<summary>Python 3.8+</summary>
+For Linux:
+  
+```bash
+# Install Python
+sudo apt update
+sudo apt install python3.11 python3-pip -y
+```
+For Windows:
+
+```bash
+# Download from Microsoft Store (easiest)
+winget install Python.Python.3.11
+
+# OR manual install
+https://www.python.org/downloads/windows/
+```
+</details>
+
+<details>
+<summary>Node.js 16+</summary>
+For Linux:
+  
+```bash
+# Official PPA
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+```
+For Windows:
+
+```bash
+# Using winget
+winget install OpenJS.NodeJS
+
+# OR official installer
+https://nodejs.org/en/download/
+```
+</details>
+</details>
+----
+
+
+🔑 Token Extraction
+-
+1. Go to DePINed Dashboard
+2. Press `CTRL + SHIFT + I`
+3. In Console:
+```javascript
+localStorage.getItem('token')
+```
+![Token Extraction](https://github.com/user-attachments/assets/ea4dd3af-d0f6-40c3-bbb2-2243b3b79f30)
+
+
+----
+## Setup Guide 🛠️
+
+### 1️⃣ Clone Repository
 ```bash
 git clone https://github.com/FakerPK/depinedbot.git
-```
-#### 2. Change Directory
-```bash
 cd depinedbot
 ```
-#### 3. Install required packages
-```python
-pip install -r requirements.txt
-```
-#### 4. Create a config.json file:
-In the project directory, create a config.json file with the following structure:
 
+### 2️⃣ Configuration Files
+
+**config.json**
 ```json
 {
     "tokens": [
@@ -60,17 +104,38 @@ In the project directory, create a config.json file with the following structure
     ]
 }
 ```
-#### 5. Add proxies to `proxy.txt` file
-The proxies should be in the following format:
-```json 
+
+**proxy.txt** (100+ recommended)
+```json
+socks5://username:pass@ip:port
 socks5://username:pass@ip:port
 ```
-Add atleast 100 proxies so that malfuntioning proxies can be removed.
-#### 6. Run the script
-To execute the script, use the following command:
+
+### 3️⃣ Proxy Setup
+1. Buy [ISP proxies](https://app.proxies.fo/ref/f1353b58-10c4-98a5-d94d-6164e2efcfaf)
+2. Generate SOCKS5 proxies
+3. Add them to the proxy file
+
+### 4️⃣ Run Bot
+
+<details>
+<summary>Python Version Of The Script</summary>
+
 ```bash
+pip -r requirements.txt
 python3 main.py
 ```
+</details>
+
+<details>
+<summary><strong>Javascript Version Script</strong></summary>
+
+```java
+npm install
+node index.js
+```
+</details>
+
 ----
 ##  **💸Donations**
 If you would like to support me or the development of this projects, you can make a donation using the following addresses:
@@ -87,9 +152,15 @@ If you would like to support me or the development of this projects, you can mak
 bc1qhx7waktcttam9q9nt0ftdguguwg5lzq5hnasmm
 ```
 ----
-## FOR ANY KIND OF HELP CONTACT : ` FakerPK` on Discord  https://discord.com/users/1087110214559473766
-----
-# SOCIALS -
+## Support 🆘  
+Contact `FakerPK` on:  
+[![Discord](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/users/1087110214559473766)  
+[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/FakerPK)
 
-- **Telegram** - [https://t.me/FakerPK](https://t.me/FakerPK)
-- **Discord** - [https://discord.gg/pGJSPtp9zz](https://discord.gg/Z58YmYwr))
+
+**Discord Server:**
+[![Discord](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/Z58YmYwr)
+
+----
+> **Warning**  
+> ⚠️ Using datacenter proxies will result in **ZERO** earnings! Only use ISP proxies.
