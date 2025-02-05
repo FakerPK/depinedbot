@@ -1,0 +1,12 @@
+{
+  "name": "depined-bot",
+  "version": "1.0.0",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "chalk": "^4.1.2",
+    "https-proxy-agent": "^7.0.4",
+    "random-useragent": "^0.5.0",
+    "sqlite3": "^5.1.7",
+    "sqlite": "^4.4.0"
+  }
+}
