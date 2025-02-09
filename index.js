@@ -1,3 +1,7 @@
+// Copyright (C) 2024 FakerPK
+// Licensed under the AGPL-3.0: https://www.gnu.org/licenses/agpl-3.0.html
+// This software is provided "as-is" without any warranties.
+
 const sqlite3 = require('sqlite3').verbose();
 const { open } = require('sqlite');
 const fs = require('fs');
@@ -5,8 +9,6 @@ const chalk = require('chalk');
 const { HttpsProxyAgent } = require('https-proxy-agent');
 const axios = require('axios');
 const { getRandomUserAgent } = require('random-useragent');
-
-// Initialize database
 let db;
 async function openDatabase() {
     return open({
@@ -14,7 +16,6 @@ async function openDatabase() {
         driver: sqlite3.Database
     });
 }
-
 async function initializeDatabase() {
     db = await openDatabase();
     await db.exec(`
@@ -22,14 +23,12 @@ async function initializeDatabase() {
         (key TEXT PRIMARY KEY, value TEXT)
     `);
 }
-
 async function setValue(key, value) {
     await db.run(
         "INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)",
         [key, JSON.stringify(value)]
     );
 }
-
 async function getValue(key) {
     const result = await db.get(
         "SELECT value FROM settings WHERE key = ?",
@@ -37,8 +36,6 @@ async function getValue(key) {
     );
     return result ? JSON.parse(result.value) : null;
 }
-
-// Proxy handling
 function loadProxies() {
     try {
         return fs.readFileSync('proxy.txt', 'utf8')
@@ -54,8 +51,6 @@ function removeProxyFromList(proxy) {
     const newProxies = proxies.filter(p => p !== proxy);
     fs.writeFileSync('proxy.txt', newProxies.join('\n'));
 }
-
-// Session class
 class CloudflareBypassSession {
     constructor() {
         this.headers = {
@@ -68,11 +63,9 @@ class CloudflareBypassSession {
         };
         this.rotateHeaders();
     }
-
     rotateHeaders() {
         this.headers['User-Agent'] = getRandomUserAgent();
     }
-
     async request(config) {
         this.rotateHeaders();
         return axios({
@@ -86,8 +79,6 @@ class CloudflareBypassSession {
         });
     }
 }
-
-// Polling logic
 let pollingTimeout;
 let active = false;
 
