@@ -10,7 +10,6 @@ import time
 from colorama import Fore, Style, init
 import random
 
-# Initialize colorama
 init(autoreset=True)
 polling_timers = []
 
