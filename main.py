@@ -175,3 +175,6 @@ if __name__ == "__main__":
         cleanup()
         set_value("connectionState", False)
         print(f"{Fore.GREEN}✅ {Style.BRIGHT}Cleanup complete{Style.RESET_ALL}")
+# Copyright (C) 2025 FakerPK
+# Licensed under the AGPL-3.0: https://www.gnu.org/licenses/agpl-3.0.html
+# This software is provided "as-is" without any warranties.
