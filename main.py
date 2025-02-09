@@ -179,5 +179,5 @@ if __name__ == "__main__":
 # This software is provided "as-is" without any warranties.
 # Adding this to make the language percentage equal for better searh results
 # Adding this to make the language percentage equal for better searh results
-# Adding this to make the language percentage equal for better searh results
-# Adding this to make the language percentage equal for better ser
+# Adding this to make the language percentage equal for better search result
+# Adding this to make the language percentage equal for better search
