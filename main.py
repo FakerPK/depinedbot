@@ -178,3 +178,11 @@ if __name__ == "__main__":
 # Copyright (C) 2025 FakerPK
 # Licensed under the AGPL-3.0: https://www.gnu.org/licenses/agpl-3.0.html
 # This software is provided "as-is" without any warranties.
+# Adding this to make the language percentage equal for better searh results
+# Adding this to make the language percentage equal for better searh results
+# Adding this to make the language percentage equal for better searh results
+# Adding this to make the language percentage equal for better searh results
+# Adding this to make the language percentage equal for better searh results
+# Adding this to make the language percentage equal for better searh results
+# Adding this to make the language percentage equal for better searh results
+
