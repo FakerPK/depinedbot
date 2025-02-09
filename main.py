@@ -183,6 +183,3 @@ if __name__ == "__main__":
 # Adding this to make the language percentage equal for better searh results
 # Adding this to make the language percentage equal for better searh results
 # Adding this to make the language percentage equal for better searh results
-# Adding this to make the language percentage equal for better searh results
-# Adding this to make the language percentage equal for better searh results
-
