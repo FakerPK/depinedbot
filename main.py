@@ -1,3 +1,6 @@
+# Copyright (C) 2025 FakerPK
+# Licensed under the AGPL-3.0: https://www.gnu.org/licenses/agpl-3.0.html
+# This software is provided "as-is" without any warranties.
 import json
 import sqlite3
 from curl_cffi import requests
