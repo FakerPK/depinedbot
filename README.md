@@ -161,5 +161,5 @@ Contact `FakerPK` on:
 </p>
 
 ----
-> **Warning**  
+> [!Warning] 
 > ⚠️ Using datacenter proxies will result in **ZERO** earnings! Only use ISP proxies.
