@@ -151,6 +151,10 @@ If you would like to support me or the development of this projects, you can mak
 ```bash
 bc1qhx7waktcttam9q9nt0ftdguguwg5lzq5hnasmm
 ```
+ **TRON**
+```json
+TVY97kfPGVBvsyrxtTiHrjXigAakpv9azX
+```
 ----
 ## Support 🆘  
 Contact `FakerPK` on:  
@@ -163,3 +167,7 @@ Contact `FakerPK` on:
 ----
 > [!Warning] 
 > ⚠️ Using datacenter proxies will result in **ZERO** earnings! Only use ISP proxies.
+
+<a href="https://github.com/FakerPK/" target="_blank">
+  <img src="https://komarev.com/ghpvc/?username=FakerPK&style=pixel&color=orange&label=PEOPLE+WHO+VIEWED+MY+PROFILE:" alt="Profile view counter">
+<\a>
